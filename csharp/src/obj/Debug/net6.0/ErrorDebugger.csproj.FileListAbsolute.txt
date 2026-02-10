@@ -1,0 +1,12 @@
+/app/src/bin/Debug/net6.0/ErrorDebugger.deps.json
+/app/src/bin/Debug/net6.0/ErrorDebugger.dll
+/app/src/bin/Debug/net6.0/ErrorDebugger.pdb
+/app/src/obj/Debug/net6.0/ErrorDebugger.csproj.AssemblyReference.cache
+/app/src/obj/Debug/net6.0/ErrorDebugger.GeneratedMSBuildEditorConfig.editorconfig
+/app/src/obj/Debug/net6.0/ErrorDebugger.AssemblyInfoInputs.cache
+/app/src/obj/Debug/net6.0/ErrorDebugger.AssemblyInfo.cs
+/app/src/obj/Debug/net6.0/ErrorDebugger.csproj.CoreCompileInputs.cache
+/app/src/obj/Debug/net6.0/ErrorDebugger.dll
+/app/src/obj/Debug/net6.0/refint/ErrorDebugger.dll
+/app/src/obj/Debug/net6.0/ErrorDebugger.pdb
+/app/src/obj/Debug/net6.0/ref/ErrorDebugger.dll

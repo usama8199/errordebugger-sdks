@@ -1,0 +1,8 @@
+[package]
+name = "integration-test-app"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+errordebugger = { path = "../../.." }
+tokio = { version = "1.32.0", features = ["full"] }

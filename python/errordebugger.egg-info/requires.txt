@@ -1,0 +1,16 @@
+opentelemetry-api>=1.21.0
+opentelemetry-sdk>=1.21.0
+opentelemetry-exporter-otlp-proto-http>=1.21.0
+opentelemetry-instrumentation>=0.42b0
+
+[django]
+opentelemetry-instrumentation-django>=0.42b0
+
+[fastapi]
+opentelemetry-instrumentation-fastapi>=0.42b0
+
+[flask]
+opentelemetry-instrumentation-flask>=0.42b0
+
+[requests]
+opentelemetry-instrumentation-requests>=0.42b0

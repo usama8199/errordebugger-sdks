@@ -1,0 +1,1 @@
+{"version":1,"defects":{"ErrorDebugger\\Tests\\ErrorDebuggerTest::testInit":4,"ErrorDebugger\\Tests\\ErrorDebuggerTest::testCapture":4},"times":{"ErrorDebugger\\Tests\\ErrorDebuggerTest::testConfigValidation":0.003,"ErrorDebugger\\Tests\\ErrorDebuggerTest::testInit":0.03,"ErrorDebugger\\Tests\\ErrorDebuggerTest::testCapture":0.008}}

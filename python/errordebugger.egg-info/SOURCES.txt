@@ -1,0 +1,15 @@
+LICENSE
+README.md
+pyproject.toml
+setup.py
+errordebugger/__init__.py
+errordebugger/_version.py
+errordebugger/instrumentation.py
+errordebugger.egg-info/PKG-INFO
+errordebugger.egg-info/SOURCES.txt
+errordebugger.egg-info/dependency_links.txt
+errordebugger.egg-info/requires.txt
+errordebugger.egg-info/top_level.txt
+tests/test_capture.py
+tests/test_frameworks.py
+tests/test_init.py
