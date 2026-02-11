@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = "errordebugger"
-  spec.version       = "1.0.0"
+  spec.version       = "1.1.0"
   spec.authors       = ["ErrorDebugger Team"]
   spec.email         = ["support@errordebugger.com"]
 

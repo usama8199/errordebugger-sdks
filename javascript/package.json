@@ -1,6 +1,6 @@
 {
     "name": "errordebugger-js",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "A simplified JavaScript/Node.js SDK for ErrorDebugger via OpenTelemetry",
     "main": "src/index.js",
     "types": "src/index.d.ts",
