@@ -38,6 +38,12 @@ git push origin v0.2.4
 
 Or manually trigger from the **Actions** tab → **Publish SDKs** → **Run workflow**.
 
+## Documentation
+
+- [**Architecture & CI/CD**](docs/ARCHITECTURE.md)
+- [**Release Process**](docs/RELEASE.md)
+- [**Setup & Maintenance**](docs/MONOREPO_SETUP.md)
+
 ## License
 
 MIT
