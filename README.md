@@ -23,7 +23,7 @@ Multi-language SDK monorepo for [ErrorDebugger](https://github.com/usama8199/err
 <dependency>
     <groupId>io.github.usama8199</groupId>
     <artifactId>errordebugger-java</artifactId>
-    <version>0.2.0</version>
+    <version>0.2.3</version>
 </dependency>
 ```
 
@@ -32,8 +32,8 @@ Multi-language SDK monorepo for [ErrorDebugger](https://github.com/usama8199/err
 All SDKs auto-publish via GitHub Actions when you push a version tag:
 
 ```bash
-git tag v0.2.0
-git push origin v0.2.0
+git tag v0.2.4
+git push origin v0.2.4
 ```
 
 Or manually trigger from the **Actions** tab → **Publish SDKs** → **Run workflow**.
