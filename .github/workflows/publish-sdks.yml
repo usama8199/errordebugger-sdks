@@ -66,7 +66,9 @@ jobs:
 
       - name: Install dependencies
         working-directory: javascript
-        run: npm install
+        run: |
+          rm -f package-lock.json
+          npm install
 
       - name: Publish to npm
         working-directory: javascript
@@ -179,7 +181,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: '8.4'
           tools: composer
 
       - name: Validate composer.json
@@ -189,6 +191,7 @@ jobs:
       - name: Install dependencies
         working-directory: php
         run: composer install --prefer-dist --no-progress
+
 
       - name: Run tests
         working-directory: php
