@@ -1,0 +1,230 @@
+name: Publish SDKs
+
+on:
+  push:
+    tags:
+      - 'v*'  # Triggers on version tags like v1.0.0, v1.0.1
+  workflow_dispatch:  # Manual trigger from GitHub UI
+    inputs:
+      sdk:
+        description: 'Which SDK to publish (all, python, javascript, go, rust, java, csharp, php, ruby)'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - python
+          - javascript
+          - go
+          - rust
+          - java
+          - csharp
+          - php
+          - ruby
+
+jobs:
+  # ──────────────────────────────────────────
+  # Python SDK → PyPI
+  # ──────────────────────────────────────────
+  publish-python:
+    if: github.event.inputs.sdk == 'all' || github.event.inputs.sdk == 'python' || startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install build tools
+        run: pip install build twine
+
+      - name: Build package
+        working-directory: backend/sdk/python
+        run: python -m build
+
+      - name: Publish to PyPI
+        working-directory: backend/sdk/python
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: twine upload dist/*
+
+  # ──────────────────────────────────────────
+  # JavaScript SDK → npm
+  # ──────────────────────────────────────────
+  publish-javascript:
+    if: github.event.inputs.sdk == 'all' || github.event.inputs.sdk == 'javascript' || startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        working-directory: backend/sdk/javascript
+        run: npm install
+
+      - name: Publish to npm
+        working-directory: backend/sdk/javascript
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public
+
+  # ──────────────────────────────────────────
+  # Go SDK → pkg.go.dev
+  # ──────────────────────────────────────────
+  publish-go:
+    if: github.event.inputs.sdk == 'all' || github.event.inputs.sdk == 'go' || startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Tag and push Go module
+        working-directory: backend/sdk/go
+        run: |
+          # Go modules are auto-indexed by pkg.go.dev when tagged
+          # Ensure go.sum is up to date
+          go mod tidy
+          go vet ./...
+          echo "✅ Go module ready - pkg.go.dev will index automatically from the tag"
+
+  # ──────────────────────────────────────────
+  # Rust SDK → crates.io
+  # ──────────────────────────────────────────
+  publish-rust:
+    if: github.event.inputs.sdk == 'all' || github.event.inputs.sdk == 'rust' || startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Build and verify
+        working-directory: backend/sdk/rust
+        run: cargo build --release
+
+      - name: Publish to crates.io
+        working-directory: backend/sdk/rust
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
+        run: cargo publish
+
+  # ──────────────────────────────────────────
+  # Java SDK → Maven Central
+  # ──────────────────────────────────────────
+  publish-java:
+    if: github.event.inputs.sdk == 'all' || github.event.inputs.sdk == 'java' || startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          server-id: central
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: GPG_PASSPHRASE
+
+      - name: Publish to Maven Central
+        working-directory: backend/sdk/java
+        env:
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: mvn clean deploy -P release
+
+  # ──────────────────────────────────────────
+  # C# SDK → NuGet
+  # ──────────────────────────────────────────
+  publish-csharp:
+    if: github.event.inputs.sdk == 'all' || github.event.inputs.sdk == 'csharp' || startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Build and pack
+        working-directory: backend/sdk/csharp/src
+        run: dotnet pack -c Release
+
+      - name: Publish to NuGet
+        working-directory: backend/sdk/csharp/src
+        run: |
+          dotnet nuget push bin/Release/*.nupkg \
+            -k ${{ secrets.NUGET_API_KEY }} \
+            -s https://api.nuget.org/v3/index.json \
+            --skip-duplicate
+
+  # ──────────────────────────────────────────
+  # PHP SDK → Packagist (auto-updated via webhook)
+  # ──────────────────────────────────────────
+  publish-php:
+    if: github.event.inputs.sdk == 'all' || github.event.inputs.sdk == 'php' || startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer
+
+      - name: Validate composer.json
+        working-directory: backend/sdk/php
+        run: composer validate --strict
+
+      - name: Install dependencies
+        working-directory: backend/sdk/php
+        run: composer install --prefer-dist --no-progress
+
+      - name: Run tests
+        working-directory: backend/sdk/php
+        run: vendor/bin/phpunit
+
+      - name: Notify Packagist
+        env:
+          PACKAGIST_API_TOKEN: ${{ secrets.PACKAGIST_API_TOKEN }}
+        run: |
+          # Packagist auto-updates from GitHub, but we can force a sync
+          curl -X POST \
+            "https://packagist.org/api/update-package?username=usamakhan8199&apiToken=$PACKAGIST_API_TOKEN" \
+            -d '{"repository":{"url":"https://github.com/usama8199/errordebugger-sdks"}}'
+          echo "✅ Packagist notified to sync latest changes"
+
+  # ──────────────────────────────────────────
+  # Ruby SDK → RubyGems
+  # ──────────────────────────────────────────
+  publish-ruby:
+    if: github.event.inputs.sdk == 'all' || github.event.inputs.sdk == 'ruby' || startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+
+      - name: Build gem
+        working-directory: backend/sdk/ruby
+        run: gem build errordebugger.gemspec
+
+      - name: Publish to RubyGems
+        working-directory: backend/sdk/ruby
+        env:
+          GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+        run: gem push errordebugger-*.gem

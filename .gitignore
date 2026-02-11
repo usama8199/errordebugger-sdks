@@ -1,0 +1,13 @@
+vendor/
+node_modules/
+target/
+bin/
+obj/
+__pycache__/
+*.pyc
+.DS_Store
+*.gem
+*.nupkg
+dist/
+build/
+*.egg-info/
